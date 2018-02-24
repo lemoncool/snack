@@ -3,7 +3,6 @@ var snack = [];  //身体
 var con = document.getElementById('container');
 var conWidth = con.offsetWidth;
 var conHeight = con.offsetHeight;
-
 window.onload = function () {
     gameStart();
 }
@@ -71,7 +70,6 @@ createFood = function () {
     con.appendChild(food);
 }
 
-
 //吃到食物 身体加1 调用生成食物方法
 // isGetFood = () =>{
 isGetFood = function () {
@@ -86,73 +84,39 @@ isGetFood = function () {
     }
 }
 
-// snackMove = function () {
-//
-// }
-
-//键盘移动事件 判断出界
-// document.onkeydown = (ev) =>{
-document.onkeydown = function (ev) {
+//direction 左右1 上下2
+snackMove = function (boundary, offset, direction) {
     var snackLen = snack.length;
     var head = snack[snackLen - 1];
+    //判断左右 和 上下 是否出界
+    if (direction == 1 && head.style.left == boundary || direction == 2 && head.style.top == boundary) {
+        gameOver();
+    } else {
+        for (var i = 0; i < snackLen - 1; i++) {
+            snack[i].style.left = snack[i + 1].offsetLeft + "px";
+            snack[i].style.top = snack[i + 1].offsetTop + "px";
+        }
+        (direction == 1) ? head.style.left = head.offsetLeft + offset + "px" : head.style.top = head.offsetTop + offset + "px"
+        isGetFood();
+    }
+}
+
+//键盘移动事件 判断出界
+document.onkeydown = (ev) =>{
+// document.onkeydown = function (ev) {
     var ev = ev || event;
     switch (ev.keyCode) {
-        //左移
-        case 37:
-            if (head.style.left == '0px') {
-                gameOver();
-            } else {
-                for (var i = 0; i < snackLen - 1; i++) {
-                    snack[i].style.left = snack[i + 1].offsetLeft + "px";
-                    snack[i].style.top = snack[i + 1].offsetTop + "px";
-                }
-                head.style.left = head.offsetLeft - 50 + "px";
-                head.style.top = head.offsetTop + "px";
-                //移动的同时判断是否吃到食物
-                isGetFood();
-            }
+        case 37:     //左移
+            this.snackMove('0px', -50, 1);
             break;
-        // 右移
-        case 39:
-            if (head.style.left == '900px') {
-                gameOver();
-            } else {
-                for (var i = 0; i < snackLen - 1; i++) {
-                    snack[i].style.left = snack[i + 1].offsetLeft + "px";
-                    snack[i].style.top = snack[i + 1].offsetTop + "px";
-                }
-                head.style.left = head.offsetLeft + 50 + "px";
-                head.style.top = head.offsetTop + "px";
-                isGetFood();
-            }
+        case 39:    // 右移
+            this.snackMove('900px', 50, 1);
             break;
-        // 下移
-        case 40:
-            if (head.style.top == '650px') {
-                gameOver();
-            } else {
-                for (var i = 0; i < snackLen - 1; i++) {
-                    snack[i].style.top = snack[i + 1].offsetTop + "px";
-                    snack[i].style.left = snack[i + 1].offsetLeft + "px";
-                }
-                head.style.top = head.offsetTop + 50 + "px";
-                head.style.left = head.offsetLeft + "px";
-                isGetFood();
-            }
+        case 40:    // 下移
+            this.snackMove('650px', 50, 2);
             break;
-        // 上移
-        case 38:
-            if (head.style.top == '0px') {
-                gameOver();
-            } else {
-                for (var i = 0; i < snackLen - 1; i++) {
-                    snack[i].style.top = snack[i + 1].offsetTop + "px";
-                    snack[i].style.left = snack[i + 1].offsetLeft + "px";
-                }
-                head.style.top = head.offsetTop - 50 + "px";
-                head.style.left = head.offsetLeft + "px";
-                isGetFood();
-            }
+        case 38:    // 上移
+            this.snackMove('0px', -50, 2);
             break;
     }
 }
